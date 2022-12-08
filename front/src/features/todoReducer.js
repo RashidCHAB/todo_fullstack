@@ -7,7 +7,7 @@ const initialState = {
 }
 export const fetchtasks = createAsyncThunk('tasks/fetch', async (_, thunkAPI) => {
     try {
-        const res = await fetch('http://localhost:3110')
+        const res = await fetch('http://localhost:3110/tasks')
         const tasks = await res.json()
 
         if (tasks.error) {
@@ -23,7 +23,7 @@ export const fetchtasks = createAsyncThunk('tasks/fetch', async (_, thunkAPI) =>
 
 export const completeTask = createAsyncThunk('tasks/complete', async (data, thunkAPI) => {
     try {
-        const res = await fetch(`http://localhost:3110/${data.id}`, {
+        const res = await fetch(`http://localhost:3110/task/${data.id}`, {
             method: 'PATCH',
             body: JSON.stringify({ completed: !data.completed }),
             headers: {
@@ -43,7 +43,7 @@ export const completeTask = createAsyncThunk('tasks/complete', async (data, thun
 
 export const deleteTask = createAsyncThunk('tasks/delete', async (data, thunkAPI) => {
     try {
-        const res = await fetch(`http://localhost:3110/${data.id}`, {
+        const res = await fetch(`http://localhost:3110/task/${data.id}`, {
             method: 'DELETE',
         })
         const tasks = await res.json()
@@ -58,7 +58,7 @@ export const deleteTask = createAsyncThunk('tasks/delete', async (data, thunkAPI
 
 export const addTask = createAsyncThunk('tasks/add', async (data, thunkAPI) => {
     try {
-        const res = await fetch('http://localhost:3110', {
+        const res = await fetch('http://localhost:3110/task', {
             method: 'POST',
             body: JSON.stringify({title: data.title}),
             headers: {
@@ -143,9 +143,7 @@ const todoSlice = createSlice({
             })
             .addCase(addTask.fulfilled, (state, action) => {
                 state.loading = false
-                state.tasks.push({
-                    title: action.payload.title
-                })
+                state.tasks.push(action.payload)
             })
             .addCase(addTask.rejected, (state, action) => {
                 state.loading = false
